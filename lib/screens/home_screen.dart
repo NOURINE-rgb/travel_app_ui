@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ui_challenge4/data/constants.dart';
 import 'package:ui_challenge4/main.dart';
+import 'package:ui_challenge4/widgets/comments.dart';
 import 'package:ui_challenge4/widgets/list_hot_destination.dart';
 import 'package:ui_challenge4/widgets/list_images.dart';
 
@@ -172,48 +173,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.only(
-                    top: 0, left: 25, right: 25, bottom: 30),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/man.jpeg'),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 100,
-                      child: const Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Arjun Unni',
-                              ),
-                              Text(
-                                'Jan 25',
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Text(description),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              )
+              const Comments(),
             ],
           ),
         ),
