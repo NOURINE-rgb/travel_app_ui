@@ -1,12 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart' as animate;
 import 'package:ui_challenge4/data/constants.dart';
 import 'package:ui_challenge4/main.dart';
+import 'package:ui_challenge4/models/destination.dart';
 import 'package:ui_challenge4/widgets/comments.dart';
 import 'package:ui_challenge4/widgets/list_hot_destination.dart';
 import 'package:ui_challenge4/widgets/list_images.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<AnimatedListState> _key = GlobalKey<AnimatedListState>();
+  List<Destination> _hotDestination = [];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) => addHot(),
+    );
+  }
+
+  void addHot() {
+    for (int i = 0; i < hotDestination.length; i++) {
+      Future.delayed(Duration(milliseconds: 300 * i), () {
+        print(i);
+        _hotDestination = [..._hotDestination, hotDestination[i]];
+        _key.currentState!.insertItem(i);
+      });
+    }
+  }
+
+  final Tween<Offset> _tween =
+      Tween(begin: const Offset(3, 0), end: Offset.zero);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,46 +101,63 @@ class HomeScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Destination",
-                    style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColor.foregroundColor,
+              animate.Animate(
+                effects: const [
+                  animate.FadeEffect(duration: Duration(milliseconds: 300)),
+                  animate.SlideEffect(
+                      begin: Offset(0, -1),
+                      end: Offset(0, 0),
+                      duration: Duration(milliseconds: 300)),
+                ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Destination",
+                      style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColor.foregroundColor,
+                          ),
+                    ),
+                    InkWell(
+                      onTap: null,
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white10,
                         ),
-                  ),
-                  InkWell(
-                    onTap: null,
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white10,
-                      ),
-                      child: Icon(
-                        Icons.search_rounded,
-                        color: AppColor.foregroundColor.withOpacity(0.6),
-                        size: 30,
+                        child: Icon(
+                          Icons.search_rounded,
+                          color: AppColor.foregroundColor.withOpacity(0.6),
+                          size: 30,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(
                 height: 50,
               ),
               SizedBox(
                 height: 200,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: destination.length,
-                    itemBuilder: (context, index) {
-                      print("$index ***********");
-                      return ListImages(imagePath: destination[index]);
-                    }),
+                child: CarouselView(
+                  itemExtent: MediaQuery.of(context).size.width - 60,
+                  children: List.generate(
+                    destination.length,
+                    (int index) => ListImages(
+                      imagePath: destination[index],
+                    ),
+                  ),
+                ),
+                //  ListView.builder(
+                //     scrollDirection: Axis.horizontal,
+                //     itemCount: destination.length,
+                //     itemBuilder: (context, index) {
+                //       return ListImages(imagePath: destination[index]);
+                //     }),
               ),
               const SizedBox(
                 height: 30,
@@ -141,13 +188,17 @@ class HomeScreen extends StatelessWidget {
               ),
               SizedBox(
                 height: 200,
-                child: ListView.builder(
+                child: AnimatedList(
+                    key: _key,
                     scrollDirection: Axis.horizontal,
-                    itemCount: hotDestination.length,
-                    itemBuilder: (context, index) {
+                    initialItemCount: _hotDestination.length,
+                    itemBuilder: (context, index, animation) {
                       print("$index ***********");
-                      return ListHotDestination(
-                          destination: hotDestination[index]);
+                      return SlideTransition(
+                        position: animation.drive(_tween),
+                        child: ListHotDestination(
+                            destination: _hotDestination[index]),
+                      );
                     }),
               ),
               const SizedBox(
@@ -173,7 +224,13 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const Comments(),
+              animate.Animate(effects: const [
+                animate.SlideEffect(
+                  begin: Offset(0, 1),
+                  end: Offset(0, 0),
+                  duration: Duration(milliseconds: 300),
+                ),
+              ], child: const Comments()),
             ],
           ),
         ),

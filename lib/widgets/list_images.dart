@@ -9,13 +9,13 @@ class ListImages extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          margin: const EdgeInsets.only(right: 15),
+
           height: 200,
           width: MediaQuery.of(context).size.width - 60,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            image:
-                DecorationImage(image: AssetImage(imagePath), fit: BoxFit.fill),
+            image: DecorationImage(
+                image: AssetImage(imagePath), fit: BoxFit.cover),
           ),
         ),
         Positioned(
